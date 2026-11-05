@@ -1,0 +1,15 @@
+{
+  "character": {
+    "name": "ИмяПерсонажа",
+    "class": "Паладин",
+    "avatar_url": "https://render.worldofwarcraft.com/eu/character/.../avatar.jpg"
+  },
+  "mythic_plus": {
+    "score": 2450
+  },
+  "raid": {
+    "name": "Амирдрассил, Надежда Сна",
+    "killed": 7,
+    "total": 9
+  }
+}
