@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Панель стримера</title>
+
+  <!-- Обязательный скрипт Twitch Extension Helper -->
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+
+  <style>
+    /* ---------- Базовые стили в тёмной теме Twitch ---------- */
+    :root {
+      --twitch-bg: #0e0e10;
+      --twitch-card: #18181b;
+      --twitch-border: #2f2f35;
+      --twitch-text: #efeff1;
+      --twitch-muted: #adadb8;
+      --twitch-purple: #9147ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Панель Twitch имеет внутреннюю ширину ~318px (320px минус рамки) */
+    body {
+      width: 320px;
+      min-height: 100px;
+      background-color: var(--twitch-bg);
+      color: var(--twitch-text);
+      font-family: "Inter", "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      padding: 8px;
+      overflow-x: hidden;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Карточка персонажа */
+    .character-card {
+      background: var(--twitch-card);
+      border: 1px solid var(--twitch-border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .character-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .character-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--twitch-purple);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .character-name {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .character-class {
+      font-size: 12px;
+      color: var(--twitch-muted);
+    }
+
+    /* Строка со статистикой */
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .stat-item {
+      flex: 1;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      padding: 6px 4px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--twitch-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+      color: var(--twitch-purple);
+    }
+
+    /* Прогресс-бар рейда */
+    .raid-progress {
+      margin-top: 10px;
+    }
+
+    .raid-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--twitch-muted);
+      margin-bottom: 4px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #2f2f35;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--twitch-purple);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    /* Состояние загрузки / ошибки */
+    .status {
+      font-size: 12px;
+      text-align: center;
+      padding: 10px 0;
+      color: var(--twitch-muted);
+    }
+
+    .status.error {
+      color: #ff6b6b;
+    }
+
+    /* Скрываем контент до загрузки */
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel" id="panel">
+    <!-- Индикатор загрузки -->
+    <div class="status" id="status">Загрузка данных персонажа…</div>
+
+    <!-- Карточка персонажа (скрыта по умолчанию) -->
+    <div class="character-card hidden" id="character-card">
+      <div class="character-header">
+        <img
+          class="character-avatar"
+          id="avatar"
+          src=""
+          alt="Аватар персонажа"
+          onerror="this.style.display='none'"
+        />
+        <div>
+          <div class="character-name" id="name">—</div>
+          <div class="character-class" id="class">—</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-label">M+</div>
+          <div class="stat-value" id="mplus-score">—</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Рейд</div>
+          <div class="stat-value" id="raid-progress-text">—</div>
+        </div>
+      </div>
+
+      <div class="raid-progress">
+        <div class="raid-label">
+          <span id="raid-name">Текущий рейд</span>
+          <span id="raid-percent">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Подключаем логику -->
+  <script src="panel.js"></script>
+</body>
+</html>
